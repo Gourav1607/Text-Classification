@@ -1,7 +1,7 @@
 # Text Classification
  Text Classification using ML and DL
  
-# Tc-nltk-tfidf - (Text Classification on NLTK Dataset using TFIDF)
+### Tc-nltk-tfidf - (Text Classification on NLTK Dataset using TFIDF)
 	Tc-nltk-tfidf-rf		(Random Forest)
 Tc-nltk-tfidf-dt		(Decision Tree)
 Tc-nltk-tfidf-knn 	(K-Nearest Neighbours)
