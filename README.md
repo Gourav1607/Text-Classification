@@ -2,14 +2,16 @@
  Text Classification using ML and DL
  
 ### Tc-nltk-tfidf - (Text Classification on NLTK Dataset using TFIDF)
-#### Tc-nltk-tfidf-rf		(Random Forest)
-#### Tc-nltk-tfidf-dt		(Decision Tree)
-#### Tc-nltk-tfidf-knn 	(K-Nearest Neighbours)
+
+Tc-nltk-tfidf-rf		(Random Forest)
+Tc-nltk-tfidf-dt		(Decision Tree)
+Tc-nltk-tfidf-knn 	(K-Nearest Neighbours)
 
 ### Tc-nltk-r-tfidf - (Text Classification on NLTK Dataset using TFIDF with only Max Frequency)
-#### Tc-nltk-r-tfidf-rf	(Random Forest)
-#### Tc-nltk-r-tfidf-dt	(Decision Tree)
-#### Tc-nltk-r-tfidf-knn 	(K-Nearest Neighbours)
+
+Tc-nltk-r-tfidf-rf	(Random Forest)
+Tc-nltk-r-tfidf-dt	(Decision Tree)
+Tc-nltk-r-tfidf-knn 	(K-Nearest Neighbours)
 
 ### Tc-nltk-lsa - (Text Classification on NLTK Dataset using TruncatedSVD)
 #### Tc-nltk-lsa-rf		(Random Forest)
