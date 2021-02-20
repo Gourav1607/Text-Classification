@@ -11,48 +11,38 @@
 
 # In[21]:
 
-
 print('Importing Libraries', end='')
 
-import pandas as pd
-import numpy as np
-from numpy.random import seed
-import re
-import os
-import pandas as pd
-import time
-
-import matplotlib.pyplot as plt
-
-import seaborn as sns
-
-import nltk
-from nltk import word_tokenize
-from nltk.corpus import reuters, stopwords
-from nltk.stem.porter import PorterStemmer
-
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.preprocessing import MultiLabelBinarizer, minmax_scale
-from sklearn.metrics import accuracy_score, confusion_matrix, roc_curve, auc
-from sklearn.model_selection import train_test_split
-
-import tensorflow as tf
-import keras
-from keras.models import Model, load_model
-from keras.layers import LSTM, Activation, Dense, Dropout, Input, Embedding
-from keras.optimizers import RMSprop
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing import sequence
-from keras.utils import to_categorical, plot_model
+from itertools import cycle
+from scipy import interp
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.utils import to_categorical, plot_model
+from keras.preprocessing import sequence
+from keras.preprocessing.text import Tokenizer
+from keras.optimizers import RMSprop
+from keras.layers import LSTM, Activation, Dense, Dropout, Input, Embedding
+from keras.models import Model, load_model
+import keras
+import tensorflow as tf
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_curve, auc
+from sklearn.preprocessing import MultiLabelBinarizer, minmax_scale
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from nltk.stem.porter import PorterStemmer
+from nltk.corpus import reuters, stopwords
+from nltk import word_tokenize
+import nltk
+import seaborn as sns
+import matplotlib.pyplot as plt
+import time
+import os
+import re
+from numpy.random import seed
+import numpy as np
+import pandas as pd
 
 get_ipython().run_line_magic('matplotlib', 'inline')
-
-from scipy import interp
-from itertools import cycle
 
 print(' - Done')
 
@@ -73,7 +63,7 @@ all_docs = train_docs
 all_docs += test_docs
 
 train_labels = [reuters.categories(doc_id) for doc_id in train_docs_id]
-test_labels  = [reuters.categories(doc_id) for doc_id in test_docs_id]
+test_labels = [reuters.categories(doc_id) for doc_id in test_docs_id]
 all_labels = train_labels
 all_labels += test_labels
 print(' - Done')
@@ -98,13 +88,15 @@ print('Caching Stop Words', end='')
 cachedStopWords = stopwords.words("english")
 print(' - Done')
 
+
 def tokenize(text):
     min_length = 3
     words = map(lambda word: word.lower(), word_tokenize(text))
     words = [word for word in words if word not in cachedStopWords]
-    tokens =(list(map(lambda token: PorterStemmer().stem(token), words)))
+    tokens = (list(map(lambda token: PorterStemmer().stem(token), words)))
     p = re.compile('[a-zA-Z]+')
-    filtered_tokens = list(filter(lambda token: p.match(token) and len(token)>=min_length, tokens))
+    filtered_tokens = list(filter(lambda token: p.match(
+        token) and len(token) >= min_length, tokens))
     return filtered_tokens
 
 
@@ -134,7 +126,8 @@ print('All Words - ', len(allwords))
 
 
 print('Sorting Train:Test Docs', end='')
-X_train, X_test, y_train, y_test = train_test_split(all_docs, all_labels, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    all_docs, all_labels, test_size=0.2, random_state=42)
 print(' - Done')
 
 maxwords = len(allwords)
@@ -157,12 +150,12 @@ print(' - Done')
 maxlen = 200
 
 for i in index_list_train:
-    if len(i)>maxlen:
+    if len(i) > maxlen:
         maxlen = len(i)
 print(maxlen)
 
 for i in index_list_test:
-    if len(i)>maxlen:
+    if len(i) > maxlen:
         maxlen = len(i)
 print(maxlen)
 
@@ -194,7 +187,7 @@ del all_labels
 # In[13]:
 
 
-config = tf.ConfigProto(device_count={"CPU":8})
+config = tf.ConfigProto(device_count={"CPU": 8})
 keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
 
 
@@ -210,7 +203,7 @@ def RNN():
         layer3 = Dense(128)(layer2)
     with tf.device('/gpu:0'):
         layer4 = Activation('relu')(layer3)
-        layer5 = Dropout(rate = 0.1)(layer4) # rate = 1-keep_prob, keep_prob=0.5
+        layer5 = Dropout(rate=0.1)(layer4)  # rate = 1-keep_prob, keep_prob=0.5
         layer6 = Dense(len(categories))(layer5)
         layer7 = Activation('softmax')(layer6)
     model = Model(inputs=inputs, outputs=layer7)
@@ -229,9 +222,10 @@ model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
 # In[16]:
 
 
-checkpoint = ModelCheckpoint('model-topcat-10-mix-{epoch:03d}-{acc:03f}-{val_acc:03f}.h5', 
+checkpoint = ModelCheckpoint('model-topcat-10-mix-{epoch:03d}-{acc:03f}-{val_acc:03f}.h5',
                              verbose=1, monitor='val_loss', save_best_only=True, mode='auto')
-history = model.fit(x_train, y_train, batch_size=128, epochs=50, validation_split=0.3, shuffle=True, callbacks=[checkpoint])
+history = model.fit(x_train, y_train, batch_size=128, epochs=50,
+                    validation_split=0.3, shuffle=True, callbacks=[checkpoint])
 
 
 # In[17]:
@@ -308,7 +302,3 @@ plt.show()
 
 
 # In[ ]:
-
-
-
-

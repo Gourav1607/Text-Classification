@@ -11,46 +11,36 @@
 
 # In[2]:
 
-
 print('Importing Libraries', end='')
 
-import pandas as pd
-import numpy as np
-from numpy.random import seed
-import re
-import os
-import pandas as pd
-import time
-
-import matplotlib.pyplot as plt
-
-import seaborn as sns
-
-import nltk
-from nltk import word_tokenize
-from nltk.corpus import reuters, stopwords
-from nltk.stem.porter import PorterStemmer
-
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.preprocessing import MultiLabelBinarizer, minmax_scale
-from sklearn.metrics import accuracy_score, confusion_matrix, roc_curve, auc
-from sklearn.model_selection import train_test_split
-
-from keras.models import Model
-from keras.layers import LSTM, Activation, Dense, Dropout, Input, Embedding
-from keras.optimizers import RMSprop
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing import sequence
-from keras.utils import to_categorical, plot_model
+from itertools import cycle
+from scipy import interp
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.utils import to_categorical, plot_model
+from keras.preprocessing import sequence
+from keras.preprocessing.text import Tokenizer
+from keras.optimizers import RMSprop
+from keras.layers import LSTM, Activation, Dense, Dropout, Input, Embedding
+from keras.models import Model
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_curve, auc
+from sklearn.preprocessing import MultiLabelBinarizer, minmax_scale
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from nltk.stem.porter import PorterStemmer
+from nltk.corpus import reuters, stopwords
+from nltk import word_tokenize
+import nltk
+import seaborn as sns
+import matplotlib.pyplot as plt
+import time
+import os
+import re
+from numpy.random import seed
+import numpy as np
+import pandas as pd
 
 get_ipython().run_line_magic('matplotlib', 'inline')
-
-from scipy import interp
-from itertools import cycle
 
 print(' - Done')
 
@@ -71,7 +61,7 @@ all_docs = train_docs
 all_docs += test_docs
 
 train_labels = [reuters.categories(doc_id) for doc_id in train_docs_id]
-test_labels  = [reuters.categories(doc_id) for doc_id in test_docs_id]
+test_labels = [reuters.categories(doc_id) for doc_id in test_docs_id]
 all_labels = train_labels
 all_labels += test_labels
 print(' - Done')
@@ -101,7 +91,8 @@ print(' - Done')
 
 
 print('Sorting Train:Test Docs', end='')
-X_train, X_test, y_train, y_test = train_test_split(all_docs, all_labels, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    all_docs, all_labels, test_size=0.2, random_state=42)
 print(' - Done')
 
 maxwords = 5000
@@ -124,12 +115,12 @@ print(' - Done')
 maxlen = 200
 
 for i in index_list_train:
-    if len(i)>maxlen:
+    if len(i) > maxlen:
         maxlen = len(i)
 print(maxlen)
 
 for i in index_list_test:
-    if len(i)>maxlen:
+    if len(i) > maxlen:
         maxlen = len(i)
 print(maxlen)
 
@@ -157,13 +148,14 @@ print(' - Done')
 del all_docs
 del all_labels
 
+
 def RNN():
     inputs = Input(name='inputs', shape=[maxlen])
     layer = Embedding(maxwords, 512, input_length=maxlen)(inputs)
     layer = LSTM(256)(layer)
     layer = Dense(128, name='FC1')(layer)
     layer = Activation('relu')(layer)
-    layer = Dropout(rate = 0.5)(layer) # rate = 1-keep_prob, keep_prob=0.5
+    layer = Dropout(rate=0.5)(layer)  # rate = 1-keep_prob, keep_prob=0.5
     layer = Dense(len(categories), name='out_layer')(layer)
     layer = Activation('softmax')(layer)
     model = Model(inputs=inputs, outputs=layer)
@@ -176,13 +168,15 @@ def RNN():
 model = RNN()
 model.summary()
 # model.compile(loss='categorical_crossentropy', optimizer=RMSprop(lr=0.001), metrics=['accuracy'])
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy',
+              optimizer='adam', metrics=['accuracy'])
 
 
 # In[10]:
 
 
-history = model.fit(x_train, y_train, batch_size=256, epochs=25, validation_split=0.20, shuffle=True)
+history = model.fit(x_train, y_train, batch_size=256,
+                    epochs=25, validation_split=0.20, shuffle=True)
 
 
 # In[11]:
@@ -249,4 +243,3 @@ plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
 plt.savefig('tc-nltk-lstm-rnn-5-loss.png', dpi=300, pad_inches=0.1)
 plt.show()
-
